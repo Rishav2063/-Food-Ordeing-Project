@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login | Foodies</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="login-container">
+    <form class="login-form" id="loginForm">
+      <h2>🍕 Welcome Back to Foodies 🍔</h2>
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <input type="password" id="password" placeholder="Enter your password" required>
+      <button type="submit">Login</button>
+      <p class="signup-link">Don't have an account? <a href="/frontend/signup.html">Sign up</a></p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        alert(data.message); // Show response message
+
+        if (response.ok && data.token) {
+          // ✅ Store token in localStorage
+          localStorage.setItem('token', data.token);
+
+          // ✅ Redirect to home page
+          window.location.href = '/frontend/index.html';
+        } else {
+          // Clear form if login fails
+          document.getElementById('email').value = '';
+          document.getElementById('password').value = '';
+        }
+      } catch (error) {
+        alert('Something went wrong. Please try again later.');
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

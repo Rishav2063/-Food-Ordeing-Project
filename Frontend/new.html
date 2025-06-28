@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Ordering Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f8f8f8;
+        }
+        header {
+            background-color: #ff5733;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+        .menu {
+            margin: 20px;
+        }
+        .menu-item {
+            display: inline-block;
+            margin: 10px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+        .cart {
+            margin-top: 20px;
+            padding: 20px;
+            border-top: 2px solid #333;
+            background-color: white;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Delicious Food</h1>
+    </header>
+    
+    <section class="menu">
+        <h2>Menu</h2>
+        <div class="menu-item" data-name="Burger" data-price="5">
+            <p>Burger - $5</p>
+            <button onclick="addToCart('Burger', 5)">Add to Cart</button>
+        </div>
+        <div class="menu-item" data-name="Pizza" data-price="8">
+            <p>Pizza - $8</p>
+            <button onclick="addToCart('Pizza', 8)">Add to Cart</button>
+        </div>
+        <div class="menu-item" data-name="Pasta" data-price="7">
+            <p>Pasta - $7</p>
+            <button onclick="addToCart('Pasta', 7)">Add to Cart</button>
+        </div>
+    </section>
+    
+    <section class="cart">
+        <h2>Cart</h2>
+        <ul id="cart-items"></ul>
+        <p>Total: $<span id="total-price">0</span></p>
+        <button onclick="checkout()">Checkout</button>
+    </section>
+    
+    <script>
+        let cart = [];
+        let totalPrice = 0;
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            totalPrice += price;
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById("cart-items");
+            const totalElement = document.getElementById("total-price");
+            cartItems.innerHTML = "";
+            cart.forEach(item => {
+                let li = document.createElement("li");
+                li.textContent = `${item.name} - $${item.price}`;
+                cartItems.appendChild(li);
+            });
+            totalElement.textContent = totalPrice;
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            alert("Thank you for your order! Your total is $" + totalPrice);
+            cart = [];
+            totalPrice = 0;
+            updateCart();
+        }
+    </script>
+</body>
+</html>

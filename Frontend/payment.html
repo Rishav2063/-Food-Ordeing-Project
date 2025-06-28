@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Page | Foodies</title>
+  <link rel="stylesheet" href="/Frontend/pay.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      text-align: center;
+    }
+    #payment-details, #payment-form {
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .hidden {
+      display: none;
+    }
+
+    /* Toast styling */
+    .toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #28a745;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      display: none;
+      z-index: 9999;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      animation: toastInOut 2s ease-in-out;
+    }
+
+    @keyframes toastInOut {
+      0% { opacity: 0; transform: translate(-50%, -60%); }
+      20% { opacity: 1; transform: translate(-50%, -50%); }
+      80% { opacity: 1; transform: translate(-50%, -50%); }
+      100% { opacity: 0; transform: translate(-50%, -40%); }
+    }
+  </style>
+</head>
+<body>
+
+<h2>Payment Details</h2>
+
+<div id="payment-details">
+  <p style="font-size: 1.5rem; font-weight: bold; color: #28a745; text-align: center;">
+    Your foods will be delivered in 30 minutes! 🍔🍕🥗
+  </p>
+</div>
+
+<form id="payment-form">
+  <h3>Delivery Details</h3>
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="text" id="address" placeholder="Address" required>
+  <input type="text" id="city" placeholder="City" required>
+  <input type="text" id="pincode" placeholder="Pincode" required>
+
+  <h3>Payment Method</h3>
+  <select id="payment-method" required>
+    <option value="">Select Payment Method</option>
+    <option value="card">Debit / Credit Card</option>
+    <option value="upi">UPI</option>
+    <option value="cod">Cash on Delivery</option>
+  </select>
+
+  <!-- Card Details -->
+  <div id="card-details" class="hidden">
+    <input type="text" id="card-number" placeholder="Card Number" required>
+    <input type="text" id="card-expiry" placeholder="Expiry Date (MM/YY)" required>
+    <input type="text" id="card-cvv" placeholder="CVV" required>
+  </div>
+
+  <!-- UPI Details -->
+  <div id="upi-details" class="hidden">
+    <input type="text" id="upi-id" placeholder="Enter your UPI ID (e.g., name@bank)" required>
+  </div>
+
+  <!-- Coupon Section -->
+  <h3>Apply Coupon</h3>
+  <input type="text" id="coupon-code" placeholder="Enter coupon code">
+  <button type="button" onclick="applyCoupon()">Apply Coupon</button>
+
+  <button type="submit">Pay</button>
+</form>
+
+<!-- Toast Message -->
+<div id="toast" class="toast" style="display:none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px;">
+  Processing payment...
+</div>
+
+<script>
+  const paymentMethodSelect = document.getElementById('payment-method');
+  const cardDetails = document.getElementById('card-details');
+  const upiDetails = document.getElementById('upi-details');
+
+  paymentMethodSelect.addEventListener('change', () => {
+    const selected = paymentMethodSelect.value;
+    cardDetails.classList.toggle('hidden', selected !== 'card');
+    upiDetails.classList.toggle('hidden', selected !== 'upi');
+
+    // Toggle required attribute dynamically for card/upi inputs
+    document.getElementById('card-number').required = selected === 'card';
+    document.getElementById('card-expiry').required = selected === 'card';
+    document.getElementById('card-cvv').required = selected === 'card';
+    document.getElementById('upi-id').required = selected === 'upi';
+  });
+
+  function applyCoupon() {
+    const code = document.getElementById('coupon-code').value.trim();
+    if (code.toLowerCase() === 'foodie10') {
+      alert('Coupon applied! 10% discount added.');
+    } else if (code) {
+      alert('Invalid coupon code.');
+    } else {
+      alert('Please enter a coupon code.');
+    }
+  }
+
+  document.getElementById('payment-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const pincode = document.getElementById('pincode').value.trim();
+    const paymentMethod = paymentMethodSelect.value;
+    const couponCode = document.getElementById('coupon-code').value.trim();
+
+    // Card details (if card payment)
+    const cardNumber = document.getElementById('card-number').value.trim();
+    const cardExpiry = document.getElementById('card-expiry').value.trim();
+    const cardCVV = document.getElementById('card-cvv').value.trim();
+
+    // UPI details (if UPI payment)
+    const upiId = document.getElementById('upi-id').value.trim();
+
+    // Validate required fields
+    if (!name || !address || !city || !pincode || !paymentMethod) {
+      alert('Please fill all the required details.');
+      return;
+    }
+
+    if (paymentMethod === 'card') {
+      if (!cardNumber || !cardExpiry || !cardCVV) {
+        alert('Please fill all card details.');
+        return;
+      }
+    } else if (paymentMethod === 'upi') {
+      if (!upiId) {
+        alert('Please enter your UPI ID.');
+        return;
+      }
+    }
+
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+
+    // Build order data to send
+    const orderData = {
+      name,
+      address,
+      city,
+      pincode,
+      paymentMethod,
+      couponCode,
+      paymentDetails: {},
+    };
+
+    if (paymentMethod === 'card') {
+      orderData.paymentDetails = {
+        cardNumber,
+        cardExpiry,
+        cardCVV,
+      };
+    } else if (paymentMethod === 'upi') {
+      orderData.paymentDetails = {
+        upiId,
+      };
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add authorization header here if needed
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+      toast.style.display = 'none';
+
+      if (response.ok) {
+        alert('Order completed! Your order will be delivered in 30 minutes.');
+        window.location.href = '/frontend/index.html';
+      } else {
+        alert('Failed to place order: ' + (result.message || 'Unknown error'));
+      }
+    } catch (error) {
+      toast.style.display = 'none';
+      alert('Error placing order: ' + error.message);
+    }
+  });
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+  /* Add any additional styling here */
+</style>
+
+</body>
+
+</html>

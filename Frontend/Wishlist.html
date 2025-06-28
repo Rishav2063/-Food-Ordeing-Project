@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wishlist - Food Ordering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .wishlist-container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .wishlist-item {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .wishlist-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .item-name {
+            font-size: 18px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .item-price {
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .wishlist-icons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .wishlist-icons i {
+            color: red;
+            font-size: 20px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wishlist-container">
+        <h2>Your Wishlist</h2>
+
+        <div class="wishlist-grid" id="wishlist-items">
+            <!-- Wishlist items will be populated here -->
+        </div>
+
+        <p class="empty-message" id="empty-message" style="display: none;">Your wishlist is empty.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const wishlistItemsContainer = document.getElementById('wishlist-items');
+            const emptyMessage = document.getElementById('empty-message');
+
+            // Fetch the wishlist data from the backend
+            try {
+                const response = await fetch('http://localhost:3000/api/wishlist', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Get the JWT token from localStorage
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.items.length === 0) {
+                        emptyMessage.style.display = 'block';
+                    } else {
+                        // Loop through the wishlist items and display them
+                        data.items.forEach(item => {
+                            const wishlistItem = document.createElement('div');
+                            wishlistItem.classList.add('wishlist-item');
+
+                            wishlistItem.innerHTML = `
+                                <div class="wishlist-icons">
+                                    <i class="fa fa-heart"></i>
+                                    <i class="fa fa-trash" title="Remove" onclick="removeFromWishlist('${item.item_id._id}', this)"></i>
+                                </div>
+                                <img src="${item.item_id.image}" alt="${item.item_id.item_name}">
+                                <p class="item-name">${item.item_id.item_name}</p>
+                                <p class="item-price">&#8377; ${item.item_id.price}</p>
+                            `;
+
+                            wishlistItemsContainer.appendChild(wishlistItem);
+                        });
+                    }
+                } else {
+                    console.log('Error fetching wishlist');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Function to remove item from the wishlist
+        async function removeFromWishlist(itemId, element) {
+            console.log('Removing item with ID:', itemId); // Debugging log
+            try {
+                const response = await fetch(`http://localhost:3000/api/wishlist/remove/${itemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Get the JWT token from localStorage
+                    }
+                });
+
+                const data = await response.json();
+                console.log(data);  // Log the response data for further debugging
+
+                if (response.ok) {
+                    alert('Item removed from wishlist!');
+                    const item = element.closest('.wishlist-item');
+                    item.remove(); // Directly remove the item from the UI
+                } else {
+                    alert(data.message || 'Error removing item');
+                    console.log('Error:', data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+
+</body>
+</html>

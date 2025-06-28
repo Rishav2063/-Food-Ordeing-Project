@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Account</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+    }
+
+    .account-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .btn-save {
+      background-color: #28a745;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-save:hover {
+      background-color: #28a745;
+    }
+
+    .saved-msg {
+      display: none;
+      text-align: center;
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
+
+    .change-password-section {
+      margin-top: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+    }
+
+    .change-password-section input {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="account-container">
+    <h2>My Account</h2>
+    <form id="account-form">
+      <label for="username">Full Name</label>
+      <input type="text" id="username" required>
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" required>
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" required>
+
+      <label for="address">Delivery Address</label>
+      <textarea id="address" required></textarea>
+
+      <button type="submit" class="btn-save">Save Changes</button>
+    </form>
+
+    <!-- Change Password Section -->
+    <div class="change-password-section">
+      <h3>Change Password</h3>
+      <form id="password-form">
+        <label for="current-password">Current Password</label>
+        <input type="password" id="current-password" placeholder="Enter current password" required>
+
+        <label for="new-password">New Password</label>
+        <input type="password" id="new-password" placeholder="Enter new password" required>
+
+        <label for="confirm-password">Confirm New Password</label>
+        <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+
+        <button type="submit" class="btn-save">Change Password</button>
+      </form>
+    </div>
+
+    <div class="saved-msg" id="saved-msg">✔️ Your account details have been saved!</div>
+    <div class="saved-msg" id="password-saved-msg">✔️ Password changed successfully!</div>
+  </div>
+
+  <script>
+    // Save Account Info
+    document.getElementById('account-form').addEventListener('submit', function(e))
+      e.preventDefault();
+
+      const userData = {
+        name: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+      };
+
+      // Save to localStorage (can be replaced with backend API)
+      localStorage.set
+

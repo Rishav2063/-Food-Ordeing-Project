@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up | Foodies</title>
+  <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+  <div class="signup-container">
+    <form class="signup-form" id="signupForm">
+      <h2>🍽️ Join Foodies World</h2>
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="password" id="password" placeholder="Create Password" required>
+      <button type="submit">Sign Up</button>
+      <p class="login-link">Already have an account? <a href="/Frontend/login.html">Login</a></p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('http://localhost:3000/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const result = await response.json();
+
+      // Show success message
+      alert(result.message);
+
+      // If signup is successful, redirect to login page
+      if (response.ok) {
+        window.location.href = '/Frontend/login.html';
+      }
+    });
+  </script>
+</body>
+</html>

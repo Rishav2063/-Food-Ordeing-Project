@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online food order website</title>
+  <!--css file link-->
+  <link rel="stylesheet" href="/Frontend/index.css">
+  <link rel="stylesheet" href="/Frontend/mediaquerry.css">
+  <!--font awesome link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+  <!---dekstop view-->
+  <div id="container" class="container">
+    <div id="menu">
+      <div class="brand-logo">
+        <img src="/Frontend/project image/foodie hunter.png" alt="">
+      </div>
+      <div class="menu-item">
+        <a href="/Frontend/About.html">About</a>
+        <a href="/Frontend/Services.html">Services</a>
+        <a href="/Frontend/Wishlist.html">Wishlist</a>
+        <a href="/Frontend/Adres.html">Address</a>
+        <a href="/Frontend/Helppage.html">Help</a>
+      </div>
+    </div>
+  
+    <div id="food-container">
+
+      <script>
+        function logout() {
+          localStorage.removeItem('token'); // ✅ Remove token
+          alert('Logged out successfully');
+          window.location.href = '/frontend/login.html'; // Redirect to login page
+        }
+      </script>
+
+      <div id="header">
+        <div class="add-box">
+          <i class="fa fa-map-marker your-address" id="add-address"><a class="List-add" href="/Frontend/adres.html">Your-Address</a></i>
+        </div>
+        <div class="util">
+          <i class="fa fa-logout" onclick="logout()">Logout</i>
+          <!-- <i class="fa fa-tags">Offers</i> -->
+          <i class="fa fa-cart-plus" id="cart-plus"><a class="signup" href="/Frontend/login.html"> Login </a></i>
+          <i class="fa fa-user-circle">
+            <a class="signup" href="/Frontend/signup.html">Signup</a>
+          </i>
+        </div>
+       </div>
+              
+      <!-- Food items will be injected here -->
+
+      <div id="BURGERiteamLIST">
+        <p class="category-name">Burgers</p>
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            fetch('http://localhost:3000/api/burgers')
+              .then(res => res.json())
+              .then(data => {
+                const container = document.getElementById('BURGERiteamLIST');
+                if (!container) return;
+
+                container.innerHTML = '<p class="category-name">Burgers</p>';
+
+                data.forEach(item => {
+                  const itemCard = document.createElement('div');
+                  itemCard.className = 'item-card';
+                  itemCard.innerHTML = `
+              <div class="card-top">
+               <i class="fa fa-star rating">${item.rating}</i> <!-- no onclick -->
+               <i class="fa fa-heart-o add-to-wishlist" onclick="addToWishlist('${item._id}', this)"></i>
+             </div>
+              <img src="/${item.image}" alt="${item.item_name}">
+              <p class="iteam-name">${item.item_name}</p>
+              <p class="iteam-price">Price : &#8377 ${item.price}</p>
+              <button class="buy-button" onclick="goToPaymentPage()">Order Here</button>
+            `;
+                  container.appendChild(itemCard);
+                });
+              })
+              .catch(err => console.error("❌ Failed to fetch burger items:", err));
+          });
+
+          // Redirect to payment page
+          function goToPaymentPage() {
+            window.location.href = "/frontend/payment.html";
+          }
+        </script>
+        <script>
+          async function addToWishlist(itemId, heartIcon) {
+            const token = localStorage.getItem('token'); // Get JWT token
+            if (!token) {
+              alert("Please log in to add items to your wishlist.");
+              return;
+            }
+
+            try {
+              const response = await fetch(`http://localhost:3000/api/wishlist/add/${itemId}`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              if (response.ok) {
+                alert('Item added to wishlist!');
+
+                // Change heart icon to filled
+                heartIcon.classList.remove('fa-heart-o');
+                heartIcon.classList.add('fa-heart');
+              } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to add item to wishlist');
+              }
+            } catch (err) {
+              console.error('Error adding item to wishlist:', err);
+              alert('Error adding item to wishlist.');
+            }
+          }
+        </script>
+
+
+      </div>
+
+
+      <div id="PIZZAS_LIST">
+  <p class="category-name">Pizzas</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/api/pizzas')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('PIZZAS_LIST');
+          if (!container) return;
+
+          container.innerHTML = '<p class="category-name">Pizzas</p>';
+
+          data.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            itemCard.innerHTML = `
+              <div class="card-top">
+                <i class="fa fa-star rating">${item.rating}</i>
+                <i class="fa fa-heart-o add-to-wishlist" onclick="addToWishlist('${item._id}', this)"></i>
+              </div>
+              <img src="/${item.image}" alt="${item.item_name}">
+              <p class="iteam-name">${item.item_name}</p>
+              <p class="iteam-price">Price : &#8377 ${item.price}</p>
+              <button class="buy-button" onclick="goToPaymentPage()">Order Here</button>
+            `;
+            container.appendChild(itemCard);
+          });
+        })
+        .catch(err => console.error("❌ Failed to fetch pizza items:", err));
+    });
+
+    function goToPaymentPage() {
+      window.location.href = "/frontend/payment.html";
+    }
+
+    async function addToWishlist(itemId, heartIcon) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please log in to add items to your wishlist.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/wishlist/add/${itemId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Item added to wishlist!');
+          heartIcon.classList.remove('fa-heart-o');
+          heartIcon.classList.add('fa-heart');
+        } else {
+          alert(data.message || 'Failed to add item to wishlist');
+        }
+      } catch (err) {
+        console.error('❌ Error adding item to wishlist:', err);
+        alert('Server error while adding item to wishlist.');
+      }
+    }
+  </script>
+</div>
+
+
+      <div id="SOUTHINDIANiteamLIST">
+  <p id="category-name">South Indian</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/api/southindian')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('SOUTHINDIANiteamLIST');
+          if (!container) return;
+
+          container.innerHTML = '<p class="category-name">South Indian</p>';
+
+          data.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            itemCard.innerHTML = `
+              <div class="card-top">
+                <i class="fa fa-star rating">${item.rating}</i>
+                <i class="fa fa-heart-o add-to-wishlist" onclick="addToWishlist('${item._id}', this)"></i>
+              </div>
+              <img src="/${item.image}" alt="${item.item_name}">
+              <p class="iteam-name">${item.item_name}</p>
+              <p class="iteam-price">Price : &#8377 ${item.price}</p>
+              <button class="buy-button" onclick="goToPaymentPage()">Order Here</button>
+            `;
+            container.appendChild(itemCard);
+          });
+        })
+        .catch(err => console.error("❌ Failed to fetch South Indian items:", err));
+    });
+
+    function goToPaymentPage() {
+      window.location.href = "/frontend/payment.html";
+    }
+
+    async function addToWishlist(itemId, heartIcon) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please log in to add items to your wishlist.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/wishlist/add/${itemId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Item added to wishlist!');
+          heartIcon.classList.remove('fa-heart-o');
+          heartIcon.classList.add('fa-heart');
+        } else {
+          alert(data.message || 'Failed to add item to wishlist');
+        }
+      } catch (err) {
+        console.error('❌ Error adding item to wishlist:', err);
+        alert('Server error while adding item to wishlist.');
+      }
+    }
+  </script>
+</div>
+
+
+
+      <div id="CHINESEiteamLIST">
+  <p class="category-name">Chinese Food</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/api/chinesefood')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('CHINESEiteamLIST');
+          if (!container) return;
+
+          container.innerHTML = '<p class="category-name">Chinese Food</p>';
+
+          data.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            itemCard.innerHTML = `
+              <div class="card-top">
+                <i class="fa fa-star rating">${item.rating}</i>
+                <i class="fa fa-heart-o add-to-wishlist" onclick="addToWishlist('${item._id}', this)"></i>
+              </div>
+              <img src="/${item.image}" alt="${item.item_name}">
+              <p class="iteam-name">${item.item_name}</p>
+              <p class="iteam-price">Price : &#8377 ${item.price}</p>
+              <button class="buy-button" onclick="goToPaymentPage()">Order Here</button>
+            `;
+            container.appendChild(itemCard);
+          });
+        })
+        .catch(err => console.error("❌ Failed to fetch Chinese items:", err));
+    });
+
+    function goToPaymentPage() {
+      window.location.href = "/frontend/payment.html";
+    }
+
+    async function addToWishlist(itemId, heartIcon) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please log in to add items to your wishlist.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/wishlist/add/${itemId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Item added to wishlist!');
+          heartIcon.classList.remove('fa-heart-o');
+          heartIcon.classList.add('fa-heart');
+        } else {
+          alert(data.message || 'Failed to add item to wishlist');
+        }
+      } catch (err) {
+        console.error('❌ Error adding item to wishlist:', err);
+        alert('Server error while adding item to wishlist.');
+      }
+    }
+  </script>
+</div>
+
+
+
+     <div id="PUREVEGiteamLIST">
+  <p class="category-name">Pure Veg</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/api/pureveg')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('PUREVEGiteamLIST');
+          if (!container) {
+            console.error("❌ Container with id 'PUREVEGiteamLIST' not found.");
+            return;
+          }
+
+          container.innerHTML = '<p class="category-name">Pure Veg</p>';
+
+          data.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            itemCard.innerHTML = `
+              <div class="card-top">
+                <i class="fa fa-star rating">${item.rating}</i>
+                <i class="fa fa-heart-o add-to-wishlist" onclick="addToWishlist('${item._id}', this)"></i>
+              </div>
+              <img src="/${item.image}" alt="${item.item_name}">
+              <p class="iteam-name">${item.item_name}</p>
+              <p class="iteam-price">Price : &#8377 ${item.price}</p>
+              <button class="buy-button" onclick="goToPaymentPage()">Order Here</button>
+            `;
+            container.appendChild(itemCard);
+          });
+        })
+        .catch(err => {
+          console.error("❌ Failed to fetch pure veg items:", err);
+        });
+    });
+
+    function goToPaymentPage() {
+      window.location.href = "/frontend/payment.html";
+    }
+
+    async function addToWishlist(itemId, heartIcon) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please log in to add items to your wishlist.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/wishlist/add/${itemId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Item added to wishlist!');
+          heartIcon.classList.remove('fa-heart-o');
+          heartIcon.classList.add('fa-heart');
+        } else {
+          alert(data.message || 'Failed to add item to wishlist');
+        }
+      } catch (err) {
+        console.error('❌ Error adding item to wishlist:', err);
+        alert('Server error while adding item to wishlist.');
+      }
+    }
+  </script>
+</div>
+
+
+      <div id="CAKEiteamLIST">
+  <p class="category-name">Cakes</p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/api/cakes')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('CAKEiteamLIST');
+          if (!container) return;
+
+          container.innerHTML = '<p class="category-name">Cakes</p>';
+
+          data.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            itemCard.innerHTML = `
+              <div class="card-top">
+                <i class="fa fa-star rating">${item.rating}</i>
+                <i class="fa fa-heart-o add-to-wishlist" onclick="addToWishlist('${item._id}', this)"></i>
+              </div>
+              <img src="/${item.image}" alt="${item.item_name}">
+              <p class="iteam-name">${item.item_name}</p>
+              <p class="iteam-price">Price : &#8377 ${item.price}</p>
+              <button class="buy-button" onclick="goToPaymentPage()">Order Here</button>
+            `;
+            container.appendChild(itemCard);
+          });
+        })
+        .catch(err => console.error("❌ Failed to fetch cake items:", err));
+    });
+
+    function goToPaymentPage() {
+      window.location.href = "/frontend/payment.html";
+    }
+
+    async function addToWishlist(itemId, heartIcon) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please log in to add items to your wishlist.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/wishlist/add/${itemId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Item added to wishlist!');
+          heartIcon.classList.remove('fa-heart-o');
+          heartIcon.classList.add('fa-heart');
+        } else {
+          alert(data.message || 'Failed to add item to wishlist');
+        }
+      } catch (err) {
+        console.error('❌ Error adding item to wishlist:', err);
+        alert('Server error while adding item to wishlist.');
+      }
+    }
+  </script>
+</div>
+
+
+      <!-- <div id="cart-page" class="cart-toggle">
+        <p id="cart-title">Cart Items</p>
+        <p id="m-total-amount">Toatal Amount : &#8377 100</p>
+        <table>
+          <thead>
+            <td>Item</td>
+            <td>Name</td>
+            <td>Quantity</td>
+            <td>Price</td>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td>
+                <img src="/Frontend/image/panner/Matar-Paneer.jpg" alt="">
+              </td>
+              <td>Matar-Paneer</td>
+              <td>
+                <button class="decrease-item">-</button>
+                <span>1</span>
+                <button class="increase-item">+</button>
+              </td>
+              <td>10</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div> -->
+    </div>
+
+
+    <!-- <div id="cart">
+            <div class="taste-header">
+                <div class="user">
+                    
+                </div>
+            </div> -->
+    <div id="category-list">
+      <p class="item-menu">Go For Foodie</p>
+      <div class="border"></div>
+      <div class="list-card">
+        <img src="project image/burgers/smashburger_double_classic_hero_195c5015ee.webp" alt="list">
+        <a href="#BURGERiteamLIST" class="List-name">Burger</a>
+
+      </div>
+      <div class="list-card">
+        <img src="project image/pizzzas/Mexican_Green_Wave.jpg" alt="list">
+        <a href="#PIZZAS_LIST" class="List-name">Pizzas</a>
+
+      </div>
+      <div class="list-card">
+        <img src="project image/south indian/Butter-Masala-Dosa.png" alt="list">
+        <a href="#SOUTHINDIANiteamLIST" class="List-name">South Indian</a>
+
+      </div>
+      <div class="list-card">
+        <img src="project image/chinese/chowmin.jpg" alt="list">
+        <a href="#CHINESEiteamLIST" class="List-name">Chinese</a>
+
+      </div>
+      <div class="list-card">
+        <img src="project image/panner/paneer-butter-masala (1).jpg" alt="list">
+        <a href="#PUREVEGiteamLIST" class="List-name">Pure Veg Dishes</a>
+
+      </div>
+      <div class="list-card">
+        <img src="project image/cakes/Chocolate Cake.jpg" alt="list">
+        <a href="#CAKEiteamLIST" class="List-name">Cakes</a>
+      </div>
+    </div>
+    <div id="checkout" class="cart-toggle">
+      <p id="total-item">Total Item: 5</p>
+      <p id="total-price">Total Price: &#8377 50</p>
+      <p id="Delievery"> Free Delievery above &#8377 2000</p>
+      <button class="cart-btn">Checkout</button>
+
+    </div>
+  </div>
+  </div>
+
+  <!-- mobile view -->
+    <div id="mobile-view" class="mobile-view">
+        <div class="mobile-top">
+            <div class="logo-box">
+                <img src="/Frontend/project image/foodie hunter.png" alt="" id="logo">
+                <i class="fa fa-map-marker your-address" id="m-add-address"> Your Address</i>
+            </div>
+            <div class="top-menu">
+                <i class="fa fa-logout"></i>
+                <i class="fa fa-login"></i>
+                <i class="fa fa-heart-o"></i>
+                <i class="fa fa-cart-plus" id="m-cart-plus"> 0</i>
+            </div>
+        </div>
+        
+        <div class="item-container">
+            <div class="category-header" id="category-header">  
+            </div>
+
+            <div id="food-items" class="food-items">
+                <div id="biryani" class="m-biryani">
+                    <p id="category-name">Burgers</p>    
+                </div>
+                <div id="chicken" class="m-chicken">
+                    <p id="category-name">Pizzas</p>    
+                </div>
+                <div id="paneer" class="m-paneer">
+                    <p id="category-name">South Indian</p>
+                </div>
+                <div id="vegetable" class="m-vegetable">
+                    <p id="category-name">Chinese</p> 
+                </div>
+                <div id="chinese" class="m-chinese">
+                    <p id="category-name">Pure Veg</p> 
+                </div>
+                <div id="south-indian" class="m-south-indian">
+                    <p id="category-name">Cakes</p>
+                </div>
+            </div>            
+        </div>
+
+        <div class="mobile-footer">
+            <p>Home</p>
+            <p>Cart</p>
+            <p>offers</p>
+            <p>orders</p>
+        </div>
+    </div>
+  <footer class="footer">
+
+    <div class="footer-content">
+      <div class="footer-section brand">
+        <h3>Foodie Hunter</h3>
+        <p>Your favorite meals, delivered fresh and fast.</p>
+      </div>
+
+      <div class="footer-section links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="#"><i class="fa fa-cutlery"></i> Menu</a></li>
+          <li><a href="#"><i class="fa fa-tags"></i> Offers</a></li>
+          <li><a href="#"><i class="fa fa-envelope"></i> Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section contact">
+        <h4>Contact Us</h4>
+        <p>Email: support@Foodie Hunter.com</p>
+        <p>Phone: +91-9876543210</p>
+        <div class="social-icons">
+          <a href="https://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
+          <a href="https://instagram.com" target="_blank"><i class="fa fa-instagram"></i></a>
+          <a href="https://twitter.com" target="_blank"><i class="fa fa-twitter"></i></a>
+          <a href="https://youtube.com" target="_blank"><i class="fa fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; 2025 Foodie Hunter. All rights reserved.
+    </div>
+  </footer>
+
+ 
+    <script src="/index.js" type="module"></script>
+
+  <!-- javascript file-->
+  <script src="/Frontend/Index.js" type="module"></script>
+
+</body>
+</html>

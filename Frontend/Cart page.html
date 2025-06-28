@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart with Quantity Control</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .cart-container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .item-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .item-price {
+            color: #666;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .qty-btn {
+            background-color: #ccc;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+
+        .qty-btn:hover {
+            background-color: #aaa;
+        }
+
+        .item-total {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .cart-summary {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .cart-summary p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .cart-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .cart-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart-container">
+        <h2>Your Cart</h2>
+
+        <!-- Cart Item Template -->
+        <div class="cart-item" data-price="100">
+            <img src="project image/burgers/Indian-Vegetarian-Burger.webp" alt="Veg Burger">
+            <div class="item-details">
+                <p class="item-name">Veg Burger</p>
+                <p class="item-price">Price: &#8377; 100</p>
+                <div class="qty-controls">
+                    <button class="qty-btn decrease">-</button>
+                    <span class="quantity">1</span>
+                    <button class="qty-btn increase">+</button>
+                </div>
+            </div>
+            <p class="item-total">&#8377; 100</p>
+        </div>
+
+        <div class="cart-item" data-price="120">
+            <img src="project image/burgers/Cheese-Burger.jpg" alt="Cheese Burger">
+            <div class="item-details">
+                <p class="item-name">Cheese Burger</p>
+                <p class="item-price">Price: &#8377; 120</p>
+                <div class="qty-controls">
+                    <button class="qty-btn decrease">-</button>
+                    <span class="quantity">1</span>
+                    <button class="qty-btn increase">+</button>
+                </div>
+            </div>
+            <p class="item-total">&#8377; 120</p>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+            <p id="total-items"><strong>Total Items:</strong> 2</p>
+            <p id="total-price"><strong>Total Price:</strong> &#8377; 220</p>
+            <p><strong>Delivery:</strong> Free Delivery above &#8377 500

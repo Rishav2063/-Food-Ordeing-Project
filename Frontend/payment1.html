@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment - Food Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .order-summary {
+      margin-bottom: 30px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .payment-options {
+      margin-top: 30px;
+    }
+
+    .payment-options label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .option {
+      margin-bottom: 20px;
+    }
+
+    .option input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .upi-field {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .upi-field input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #28a745;
+      color: #fff;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Order Summary & Payment</h2>
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <div class="order-item">
+        <span>Veg Burger × 2</span>
+        <span>₹200</span>
+      </div>
+      <div class="order-item">
+        <span>Cheese Pizza × 1</span>
+        <span>₹250</span>
+      </div>
+      <div class="order-item">
+        <span>Noodels × 3</span>
+        <span>₹200</span>
+      </div>
+      <div class="total">Total: ₹650</div>
+    </div>
+
+    <!-- Payment Options -->
+    <div class="payment-options">
+      <label>Choose Payment Method:</label>
+
+      <div class="option">
+        <input type="radio" name="payment" id="upi" value="upi" checked>
+        <label for="upi">Pay with UPI</label>
+        <div class="upi-field" id="upi-field">
+          <input type="text" placeholder="Enter UPI ID (e.g. example@upi)">
+        </div>
+      </div>
+
+      <div class="option">
+        <input type="radio" name="payment" id="cod" value="cod">
+        <label for="cod">Cash on Delivery</label>
+      </div>
+    </div>
+
+    <button type="submit">Confirm Order</button>
+  </div>
+
+  <script>
+    const upiRadio = document.getElementById('upi');
+    const codRadio = document.getElementById('cod');
+    const upiField = document.getElementById('upi-field');
+
+    upiRadio.addEventListener('change', () => {
+      upiField.style.display = 'block';
+    });
+
+    codRadio.addEventListener('change', () => {
+      upiField.style.display = 'none';
+    });
+
+    // Show UPI field by default
+    window.onload = () => {
+      if (upiRadio.checked) upiField.style.display = 'block';
+    };
+  </script>
+
+</body>
+</html>
